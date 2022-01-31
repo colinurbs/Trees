@@ -1,5 +1,4 @@
 	 
-function run(generations) {
 	var pop = 6;
 	var params = { fullscreen: true };
 	var elem = document.body;
@@ -15,42 +14,64 @@ function run(generations) {
 	 makeInitial(pop);
 
 	 //initial tree position
-	 var x = 100 ;
-	 var y = 350;
+	
 
-	 var test = two.makeCircle(50, 50, 50);
+	var test = two.makeCircle(50, 50, 50);
 	 
-	 for (var i = 0; i < generations; i++) {
-	 	two.clear();
-	 	console.log(i);
-	 let promise = new Promise(resolve => {
-  		setTimeout(() => resolve("done!"), 1000);
-	});
 
-	promise.then(function(){
-	 	makeGen();
-	});
+	makeGen();
 
-	}
+	var intervalID = setInterval(makeGen, 500);
+	var playing = true;
+	 
+
+
+		document.body.onkeyup = function(e){
+		    if(e.keyCode == 32){
+
+		    	if(playing== true){
+		        	clearInterval(intervalID);
+		        	playing = false;
+		        }else {
+		        	//var intervalID = setInterval(makeGen, 500);
+					playing = true;
+		        }
+
+		    }
+		}
+	
+	
+
+	
 
 	 function makeGen(){
-	 		 for (var i = population.length - 1; i >= 0; i--) {
-			 	var data = [];
-			 	data['id'] = i;
-			 	data['score'] = "0";
-			 	data['leaves'] = drawTree(two, x,y, population[i]);
-			 	data['genes'] = population[i];
-			 	data['origin'] = [x , y];
-			 	trees.push(data);
-			 	x = x +200;
-			 	
-			 }
-			
-			 //score the trees
-			 setScores();
 
-			 //create new generation
-			 population = doMating();
+	 	console.log(trees.length);
+	 	var x_start = 100;
+		var y_start = 350;
+		trees = [];
+
+	 	two.clear();
+		for (var i = population.length - 1; i >= 0; i--) {
+		 	var data = [];
+		 	data['id'] = i;
+		 	data['score'] = 0;
+		 	data['leaves'] = drawTree(two, x_start,y_start, population[i]);
+		 	data['genes'] = population[i];
+		 	data['origin'] = [x_start , y_start];
+		 	trees.push(data);
+		 	x_start = x_start +200;
+		}
+		console.log(trees.length);
+		console.log(population.length);
+		
+		//score the trees
+		setScores();
+
+
+
+		 //create new generation
+		population = doMating();
 
 	 }
 
@@ -87,9 +108,13 @@ function run(generations) {
 
 			for (var j = 0; j < parent1.length; j++) {
 				if (Math.random() >= 0.5){
-					child.push(parent1[j]);
+
+					var chrome = parent1[j] - getRand(0,5);
+					child.push(chrome);
 				}else{
-					child.push(parent2[j]);
+
+					var chrome = parent2[j] + getRand(0,5);
+					child.push(chrome);
 				}
 
 			}
@@ -137,11 +162,12 @@ function run(generations) {
 				}
 			}
 			line.linewidth = 1;
-			
+			two.update();	
 		}
 		for (var i = 0; i < trees.length; i++) {
+
 			two.makeText(trees[i]['score'] ,trees[i]['origin'][0] ,375, 'bold');
-				
+			two.update();
 		}
 
 	}
@@ -149,4 +175,3 @@ function run(generations) {
 	function getRand(min, max) {
 		return Math.floor(Math.random() * max + min);
 	}
-}
