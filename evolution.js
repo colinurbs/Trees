@@ -3,7 +3,8 @@
 	var params = { fullscreen: true };
 	var elem = document.body;
 	var two = new Two(params).appendTo(elem);
-	
+	var highestScore = 0;
+	var bestGenes = [];
 
 	var population = [];
 	var leaves = [];
@@ -21,7 +22,7 @@
 
 	makeGen();
 
-	var intervalID = setInterval(makeGen, 500);
+	var intervalID = setInterval(makeGen, 1);
 	var playing = true;
 	 
 
@@ -50,12 +51,16 @@
 
 		two.clear();
 		two.makeText("Generations " +count ,50,400, 'bold');
+		two.makeText("High Score " +highestScore ,50,425, 'bold');
+		drawTree(two, 100,650, bestGenes);
 		two.update();
 		for (var i = population.length - 1; i >= 0; i--) {
 			var data = [];
 			data['id'] = i;
 			data['score'] = 0;
-			data['leaves'] = drawTree(two, x_start,y_start, population[i]);
+			var treeReturn = drawTree(two, x_start,y_start, population[i]);
+			data['branchSegments'] = treeReturn['branchSegments'];
+			data['leaves'] = treeReturn['leaves'];
 			data['genes'] = population[i];
 			data['origin'] = [x_start , y_start];
 			trees.push(data);
@@ -88,7 +93,7 @@
 		
 		for (var i = 0; i < trees.length; i++) {
 			//console.log(trees[i]['score']);
-			if(i < 5){
+			if(i < 4){
 				fittest.push(trees[i]['genes']);
 			}
 
@@ -97,18 +102,18 @@
 		//console.log(fittest);
 
 		for (var i = 0; i <= pop; i++) {
-			var parent1 = fittest[Math.floor(Math.random()*fittest.length)];
+			var parent1 = fittest[getRand(0,2)];
 			var parent2 = fittest[Math.floor(Math.random()*fittest.length)];
 			var child = [];
 
 			for (var j = 0; j < parent1.length; j++) {
 				if (Math.random() >= 0.5){
 
-					var chrome = parent1[j] - getRand(0,5);
+					var chrome = parent1[j] - getRand(0,3);
 					child.push(chrome);
 				}else{
 
-					var chrome = parent2[j] + getRand(0,5);
+					var chrome = parent2[j] + getRand(0,3);
 					child.push(chrome);
 				}
 
@@ -139,25 +144,53 @@
 
 	 function setScores(){
 
-		for  (var  x = 0; x <= trees.length * 200;) {
 
-			x += 5;
-			var line = two.makeLine( x, 0, x, 350);
-			line.stroke = "yellow";
+		for (var  x = 0; x <= trees.length * 200;) {
+
+			x++;
+			//var line = two.makeLine( x, 0, x, 350);
+			var rays = 1;
+			//line.stroke = "yellow";
 			//check every tree
 			for (var i = 0; i < trees.length; i++) {
-				
-					
 				//check every leaf
+					//console.log(trees[i]);
+
+					trees[i]['leaves'] = trees[i]['leaves'].sort(sortFunction);
+
+					function sortFunction(a, b) {
+					    if (a[1] === b[1]) {
+					        return 0;
+					    }
+					    else {
+					        return (a[1] < b[1]) ? -1 : 1;
+					    }
+					}
+					
 				for (var j = 0; j < trees[i]['leaves'].length; j++) {
-					if((x - trees[i]['leaves'][j][0])**2 < 15**2){
-						line.stroke = "green";
-						trees[i]['score']++;
+					if((x - trees[i]['leaves'][j][0])**2 < 5**2){
+						//line.stroke = "green";
+						if(rays > 0) {
+							trees[i]['score']++;
+							rays--;
+							//var usedline = two.makeLine( x, trees[i]['leaves'][j][1], x, 350);
+							 //usedline.stroke = "red";
+							 
+						}
+
 					}
 				}
 			}
-			line.linewidth = 1;
-			two.update();	
+			//line.linewidth = 1;
+			//two.update();	
+		}
+
+		for (var i = 0; i < trees.length; i++) {
+			trees[i]['score'] = trees[i]['score'] - (trees[i]['branchSegments']);
+			if(trees[i]['score'] > highestScore){
+				highestScore = trees[i]['score'];
+				bestGenes = trees[i]['genes'];
+			}
 		}
 		for (var i = 0; i < trees.length; i++) {
 
