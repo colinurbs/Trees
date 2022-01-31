@@ -1,4 +1,4 @@
-	 
+	var count = 0;
 	var pop = 6;
 	var params = { fullscreen: true };
 	var elem = document.body;
@@ -27,48 +27,43 @@
 
 
 		document.body.onkeyup = function(e){
-		    if(e.keyCode == 32){
+			if(e.keyCode == 32){
 
-		    	if(playing== true){
-		        	clearInterval(intervalID);
-		        	playing = false;
-		        }else {
-		        	//var intervalID = setInterval(makeGen, 500);
+				if(playing== true){
+					clearInterval(intervalID);
+					playing = false;
+				}else {
+					//var intervalID = setInterval(makeGen, 500);
 					playing = true;
-		        }
+				}
 
-		    }
+			}
 		}
-	
-	
 
-	
 
-	 function makeGen(){
-
-	 	console.log(trees.length);
-	 	var x_start = 100;
+	function makeGen(){
+		count++;
+		
+		var x_start = 100;
 		var y_start = 350;
 		trees = [];
 
-	 	two.clear();
+		two.clear();
+		two.makeText("Generations " +count ,50,400, 'bold');
+		two.update();
 		for (var i = population.length - 1; i >= 0; i--) {
-		 	var data = [];
-		 	data['id'] = i;
-		 	data['score'] = 0;
-		 	data['leaves'] = drawTree(two, x_start,y_start, population[i]);
-		 	data['genes'] = population[i];
-		 	data['origin'] = [x_start , y_start];
-		 	trees.push(data);
-		 	x_start = x_start +200;
+			var data = [];
+			data['id'] = i;
+			data['score'] = 0;
+			data['leaves'] = drawTree(two, x_start,y_start, population[i]);
+			data['genes'] = population[i];
+			data['origin'] = [x_start , y_start];
+			trees.push(data);
+			x_start = x_start +200;
 		}
-		console.log(trees.length);
-		console.log(population.length);
 		
 		//score the trees
 		setScores();
-
-
 
 		 //create new generation
 		population = doMating();
@@ -78,19 +73,19 @@
 
 	 function doMating(){
 
-	 	var fittest = [];
-	 	var nextGen = [];
+		var fittest = [];
+		var nextGen = [];
 
-	 	trees.sort(function(a, b) {
+		trees.sort(function(a, b) {
 		  var keyA = a.score,
-		    keyB = b.score;
+			keyB = b.score;
 		  // Compare the 2 dates
 		  if (keyA < keyB) return 1;
 		  if (keyA > keyB) return -1;
 		  return 0;
 		});
 
-	 	
+		
 		for (var i = 0; i < trees.length; i++) {
 			//console.log(trees[i]['score']);
 			if(i < 5){
@@ -135,19 +130,19 @@
 	 function makeInitial(count) {
 
 		for (var i = count - 1; i >= 0; i--) {
-	 		//trunkMin, trunkMax, limbCount, limbSegments, limbAngleMin, limbAngleMax, limbLenMin, limbLenMax
-	 		var genes =[getRand(1,100),getRand(1,100) ,getRand(1,10), getRand(1,10), getRand(90,270), getRand(90,270), getRand(1,50),getRand(1,50)];
-	 		population.push(genes);
-	 	}
+			//trunkMin, trunkMax, limbCount, limbSegments, limbAngleMin, limbAngleMax, limbLenMin, limbLenMax
+			var genes =[getRand(1,100),getRand(1,100) ,getRand(1,10), getRand(1,10), getRand(90,270), getRand(90,270), getRand(1,50),getRand(1,50)];
+			population.push(genes);
+		}
 
 	 }
 
 	 function setScores(){
 
-	 	for  (var  x = 0; x <= trees.length * 200;) {
+		for  (var  x = 0; x <= trees.length * 200;) {
 
- 			x += 5;
- 			var line = two.makeLine( x, 0, x, 350);
+			x += 5;
+			var line = two.makeLine( x, 0, x, 350);
 			line.stroke = "yellow";
 			//check every tree
 			for (var i = 0; i < trees.length; i++) {
