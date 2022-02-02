@@ -1,5 +1,5 @@
 
-var drawTree = function (two, xorigin,yorigin, genes ) {
+var drawTree = function (two, xorigin,yorigin, genes, display) {
 	//trunkMin, trunkMax, limbCount, limbSegments, limbAngleMin, limbAngleMax, limbLenMin, limbLenMax
 	var segmentCount = 0;
 	var leaves = [];
@@ -12,11 +12,14 @@ var drawTree = function (two, xorigin,yorigin, genes ) {
 	for (let i = 0; i < genes[2]; i++) {
 		makeLimb(genes[3],genes[6],genes[7],genes[4],genes[5]);
 	}
-	two.update();
 
 	var data = []; 
 	data['leaves'] = leaves;
 	data['branchSegments'] = segmentCount;
+
+	if(display == false){
+		
+	}
 	return data;
 
 	function makeTrunk(height) {
