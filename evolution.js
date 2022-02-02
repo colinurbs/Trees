@@ -51,8 +51,8 @@
 
 		two.clear();
 		two.makeText("Generations " +count ,50,400, 'bold');
-		two.makeText("High Score " +highestScore ,50,425, 'bold');
-		drawTree(two, 100,650, bestGenes);
+		two.makeText("High Score " +highestScore ,100,425, 'bold');
+		drawTree(two, 100,850, bestGenes);
 		two.update();
 		for (var i = population.length - 1; i >= 0; i--) {
 			var data = [];
@@ -92,8 +92,7 @@
 
 		
 		for (var i = 0; i < trees.length; i++) {
-			//console.log(trees[i]['score']);
-			if(i < 4){
+			if(i < 5){
 				fittest.push(trees[i]['genes']);
 			}
 
@@ -102,20 +101,26 @@
 		//console.log(fittest);
 
 		for (var i = 0; i <= pop; i++) {
-			var parent1 = fittest[getRand(0,2)];
+			var parent1 = fittest[Math.floor(Math.random()*fittest.length)];
 			var parent2 = fittest[Math.floor(Math.random()*fittest.length)];
 			var child = [];
 
 			for (var j = 0; j < parent1.length; j++) {
 				if (Math.random() >= 0.5){
-
-					var chrome = parent1[j] - getRand(0,3);
+					var chrome = parent1[j];
 					child.push(chrome);
 				}else{
 
-					var chrome = parent2[j] + getRand(0,3);
+					var chrome = parent2[j];
 					child.push(chrome);
 				}
+
+				if(Math.random() < 0.5) {
+					child[Math.floor(Math.random()*child.length)] += getRand(0,2);
+				} else {
+					child[Math.floor(Math.random()*child.length)] -= getRand(0,2);
+				}
+
 
 			}
 
@@ -186,7 +191,7 @@
 		}
 
 		for (var i = 0; i < trees.length; i++) {
-			trees[i]['score'] = trees[i]['score'] - (trees[i]['branchSegments']);
+			trees[i]['score'] = trees[i]['score'] - (trees[i]['branchSegments']*1);
 			if(trees[i]['score'] > highestScore){
 				highestScore = trees[i]['score'];
 				bestGenes = trees[i]['genes'];
