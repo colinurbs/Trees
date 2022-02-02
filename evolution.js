@@ -36,7 +36,7 @@
 		trees = [];
 
 		drawTree(two, 100, 350, bestGenes, true);
-		var info = "Generation: " + count + "<br/>Best Score: " + highestScore + "<br/>Currently Viewing: " + showing;
+		var info = "Generation: " + count + "<br/>Best Score: " + highestScore + "<br/>Currently Viewing Generation " + showing;
 		document.getElementById("current").innerHTML = info;
 
 
