@@ -3,6 +3,7 @@ var drawTree = function (two, xorigin,yorigin, genes, display) {
 	//trunkMin, trunkMax, limbCount, limbSegments, limbAngleMin, limbAngleMax, limbLenMin, limbLenMax
 	var segmentCount = 0;
 	var leaves = [];
+	var branches = [];
 	var prevAngle = 0;
 
 	var gP = [xorigin, yorigin];
@@ -15,6 +16,7 @@ var drawTree = function (two, xorigin,yorigin, genes, display) {
 
 	var data = []; 
 	data['leaves'] = leaves;
+	data['branches'] = branches;
 	data['branchSegments'] = segmentCount;
 
 	if(display == false){
@@ -33,8 +35,8 @@ var drawTree = function (two, xorigin,yorigin, genes, display) {
 	}
 
 	function makeBranch(len, angle, prevAngle) {
-		x = gP[0] + len * Math.cos(angle);
-		y = gP[1] + len * Math.sin(angle);
+		x = Math.floor(gP[0] + len * Math.cos(angle));
+		y = Math.floor(gP[1] + len * Math.sin(angle));
 
 		var line = two.makeLine( gP[0], gP[1], x,  y);
 		var circle = two.makeCircle(x, y, 2.5);
@@ -42,8 +44,11 @@ var drawTree = function (two, xorigin,yorigin, genes, display) {
 		circle.fill = "tan";
 		line.linewidth = 5;
 		line.stroke = "tan";
+		var branch = [[gP[0],gP[1]],[x,y]];
 		gP[0] = x;
 		gP[1] = y;		
+
+		branches.push(branch);
 
 		prevAngle = angle;
 	}
