@@ -1,7 +1,7 @@
 # Trees
 Tree simulator based on genetic algorithm 
 
-I thought it would be interesting to have a system using agenetic algorithm to generate trees but rather than testing them in a vacuum I'm testing them in the context of a forest where each member of a generation is competing with it's siblinging for a limited amount of light.
+I thought it would be interesting to have a system using agenetic algorithm to generate trees but rather than testing them in a vacuum I'm testing them in the context of a forest where each member of a generation is competing with it's siblings for a limited amount of light.
 
 Fitness is determined by which tree's leaves capture the most 'light' while instituting a penalty for excesive limb segments.
 
