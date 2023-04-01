@@ -1,4 +1,3 @@
-
 var drawTree = function (two, xorigin,yorigin, genes, display) {
 	//trunkMin, trunkMax, limbCount, limbSegments, limbAngleMin, limbAngleMax, limbLenMin, limbLenMax
 	var segmentCount = 0;
@@ -8,10 +7,27 @@ var drawTree = function (two, xorigin,yorigin, genes, display) {
 
 	var gP = [xorigin, yorigin];
 	var trunkTop = '';
+	console.log(genes);
+	
+	const group = two.makeGroup();
 
-	makeTrunk(getRand(genes[0],genes[1]));
-	for (let i = 0; i < genes[2]; i++) {
-		makeLimb(genes[3],genes[6],genes[7],genes[4],genes[5]);
+	var height = genes[1];
+	const trunk = two.makeLine( gP[0], gP[1], gP[0],  gP[1] - 10);
+	trunk.linewidth = 10;
+	trunk.stroke = "tan";
+	gP[1] = gP[1] - height;
+	trunkTop = [gP[0], gP[1]];
+
+	// Set the branching angle and reduction factor
+	const branchAngle = Math.PI / genes[3];
+	const branchLengthFactor = genes[4];
+
+	group.add(trunk);
+	
+
+	if(genes[5] > 1) {
+		
+		drawBranches(gP[0], gP[1], genes[0],genes[1],genes[2]);
 	}
 
 	var data = []; 
@@ -19,72 +35,52 @@ var drawTree = function (two, xorigin,yorigin, genes, display) {
 	data['branches'] = branches;
 	data['branchSegments'] = segmentCount;
 
-	if(display == false){
-		
-	}
 	return data;
 
-	function makeTrunk(height) {
+	
+	
+	// Create a function to draw the branches recursively
+	function drawBranches(startX, startY, length, angle, depth) {
 
-		var line = two.makeLine( gP[0], gP[1], gP[0],  gP[1] - height);
-		line.linewidth = 10;
-		line.stroke = "tan";
-		gP[1] = gP[1] - height;
-		trunkTop = [gP[0], gP[1]];
+		const endX = startX + length * Math.sin(angle);
+  		const endY = startY - length * Math.cos(angle);
 
-	}
+  		if (endY < 250 ){
+  			depth = 0;
+  		}
+	  if (depth === 0) {
+	  	makeLeaf();
+	    return;
+	  }
 
-	function makeBranch(len, angle, prevAngle) {
-		x = Math.floor(gP[0] + len * Math.cos(angle));
-		y = Math.floor(gP[1] + len * Math.sin(angle));
+	  	
 
-		var line = two.makeLine( gP[0], gP[1], x,  y);
-		var circle = two.makeCircle(x, y, 2.5);
-		circle.stroke = "tan";
-		circle.fill = "tan";
-		line.linewidth = 5;
-		line.stroke = "tan";
-		var branch = [[gP[0],gP[1]],[x,y]];
-		gP[0] = x;
-		gP[1] = y;		
+	 	
 
-		branches.push(branch);
+	  // Create a new Two.js line object and add it to the parent group
+	 	
+	 	if(endY < startY) {
+		  	const branch = two.makeLine(startX, startY, endX, endY);
+		  	branch.stroke = "green";
+		  	let branch_data = [startX, startY, endX, endY];
+			branches.push(branch_data);
+		  	group.add(branch);
 
-		prevAngle = angle;
+		  	gP[0] = endX;
+		  	gP[1] = endY;
+
+		  // Recursively draw two more branches at a reduced length and with a slightly different angle
+		  	drawBranches(endX,endY, length * branchLengthFactor, angle + branchAngle, depth - 1);
+	  		drawBranches(endX,endY, length * branchLengthFactor, angle - branchAngle, depth - 1);
+  		}
 	}
 
 	function makeLeaf(){
-
-		var circle = two.makeCircle(gP[0], gP[1], 5);
+		var circle = two.makeCircle(gP[0], gP[1], 2);
 		circle.stroke = "green";
 		circle.fill = "green";
 		leaves.push([gP[0],gP[1]]);
-
-
 	}
 
-	function makeLimb(segments,minBranch, maxBranch, baseAngle, randMax, leafSize){
-		for (let i = 0; i < segments; i++) {
-			segmentCount++;
-			var angle = baseAngle + prevAngle / getRand(0, randMax); 
-			makeBranch(minBranch, angle, prevAngle);
-			prevAngle = angle;
-		}
-
-		if(gP[1] < yorigin){
-			makeLeaf();
-		} else {
-			segmentCount += 10;
-		}
-		
-		gP[0] = trunkTop[0];
-		gP[1] = trunkTop[1];
-		
-
-	}
-
-	function getRand(min, max) {
-		return Math.floor(Math.random() * max + min);
-	}
 
 };
